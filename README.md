@@ -1,1 +1,11 @@
-# HPC_in_Finance
+# High-Performance Computing with Applications in Finance
+
+## C 
+
+## C++
+
+## Fortran
+
+## Python
+
+## OpenMP
