@@ -6,7 +6,8 @@ European Call and Put options using Black Scholes formula. Compute the greeks:
 - theta
 - rho
 
-![Greek Table](greeks_table.png)
+![Greek Table]("greeks_table.png")
+[Source](https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model#The_Options_Greeks)
 
 ### Login into *Midway* Server
 - `ssh -Y siebenschuh@midway3.rcc.uchicago.edu`
