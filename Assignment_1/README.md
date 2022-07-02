@@ -6,16 +6,15 @@ European Call and Put options using Black Scholes formula. Compute the greeks:
 - theta
 - rho
 
-Image(url= "greeks_table.png", width=400, height=400)
+![Greek Table](greeks_table.png)
 
-
-
-### Steps to log into *Midway* Server
+### Login into *Midway* Server
 - `ssh -Y siebenschuh@midway3.rcc.uchicago.edu`
 - pw: as on okta for CNetID (requires push)
 Run
 - `module avail`
 - `module list`
+or, directly, 
 - `module load intel/2022.0`
 
 Use Use Intel complier (icc) to build the program
