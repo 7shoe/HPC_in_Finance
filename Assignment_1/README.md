@@ -7,6 +7,7 @@ European Call and Put options using Black Scholes formula. Compute the greeks:
 - rho
 
 ![Greek Table](/Assignment_1/greek_table.png)
+
 [Source](https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model#The_Options_Greeks)
 
 ### Login into *Midway* Server
@@ -59,3 +60,4 @@ Another idea was to store these values in two sorted arrays (one for the quantil
 
 ## Summary
 The code compiled and ran beautifullty on `Midway`.
+It ran in `61`ms (submitted version).
