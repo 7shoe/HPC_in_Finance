@@ -88,7 +88,7 @@ int main(){
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
     // Output
-    std::cout << "C_hat: " << C[10] << std::endl;
+    std::cout << "\nExample\nC_hat: " << C[10] << std::endl;
 
     // Report 
     std::cout << "- - - - - - - - - - - - - - " << std::endl;
