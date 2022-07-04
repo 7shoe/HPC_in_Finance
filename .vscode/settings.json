@@ -75,6 +75,14 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "__bits": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__tree": "cpp",
+        "csignal": "cpp",
+        "iomanip": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "typeindex": "cpp",
+        "cinttypes": "cpp"
     }
 }
