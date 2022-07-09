@@ -1,5 +1,6 @@
-# Helpful Notes on the Task
+# Week 4: 
 
+# 1. Random Number Generation in C++ with Intel's `MKL` Library
 ## Single-Stream Random Number Generator
 - Intel Math Kernel Library (`MKL`) allows parallel mode for random number generator.  
 - lot's of features in available when including `mkl_vsl.h`
@@ -42,5 +43,66 @@ vslDeleteStream(&stream1);
 
 ## Example: Simulation of $\pi$ via parallel random number generation
 ```
-
+...
 ```
+
+# 2. Python 
+`cProfile`
+`N` body problems and `Julia Set`
+`High P
+
+## Login
+On Midway, login and request a compute node (e.g. for 1 hour) going forward
+`sinteractive --time=1:0:0`
+will forward us to `siebenschuh@midway3-0007 {Dictionary}` or something
+Then run
+```
+module avail python
+module load python/anaconda-2021.05
+
+ipython
+```
+which opens a promt in which code can be run cell by cell.
+
+## `cProfiler`
+cProfile provides deterministic profiling of Python programs. Each profile is a set of statistics that describes how often and for how long various parts of the program executed. The Python standard library provides two different implementations. Namely, `cProfiler` and `profile`. We care for the former. 
+
+`cProfile` is recommended for most users; it’s a C extension with reasonable overhead that makes it suitable for profiling long-running programs. Based 
+[documentation](https://docs.python.org/3/library/profile.html)
+
+Profile via 
+```
+python -m cProfile -s cumulative sample_file.py
+`
+``
+only provides `ncalls` (number of function calls), `tottime` (total time spend) but it does not provide a line-by-line profiling.
+On Midway, pip can be used to install libraries but they need to be installed into a local directory
+```
+cd .local/bin
+pip install line_profiles
+```
+
+## `line_profiler`
+Requires annotating the function we want to profile with annotator `@profile` 
+
+## Python: A Dynamically Typed Language
+C++ is static. At compile time a declared variable `float x = 1.0f;` is fixed as such. In Python, however, a variable `x` can be a float first `x = 1.0` and a `str` latter via `x = "Hello"`.
+
+In Python, this dynamic functionality is realized with objects. These objects carry support operations. This results in additional overhead that is not useful when datatype discipline is applied.
+
+
+## Cython
+Allows usage of static C-type extensions for Python. The project's [website]()
+Compiler is used to generate efficient C Code from Cython code which can be used in regular Python programs.
+
+Example
+```
+cdef int a = 1
+```
+All C types are supported `bint` (instead of `bool`), `int, float`. Additionally, arrays and pointers are available.
+```
+cdef int k[10]
+cdef double complex z, c
+cdef unsigned int d
+```
+C functions and Python functions can call each other. *Fibbonaci* is a good example.
