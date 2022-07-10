@@ -115,7 +115,7 @@ In the implemented example, `TreePricer_Numpy.py` which purely runs on a vectori
 
 To run the code:
 ```
-ython TreePricer_Numpy.py build_ext --inplace
+python TreePricer_Numpy.py build_ext --inplace
 ```
 The `--inplace` option creates the shared object file (with .so suffix) in the current directory.
 
