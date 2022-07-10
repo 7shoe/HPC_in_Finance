@@ -1,9 +1,12 @@
 #include <iostream>
-#include <vector>
+#include <stdio.h>
 #include <chrono>       /* measure time */
 #include <cstdlib>      /* rand() */
 #include <cmath>        /* exp */
 #include <algorithm>
+#include <omp.h>        /* open MP */
+
+#define SAMPLES 3
 
 /**
  * Price of a European Call option  (if the respective put price is available through the put-call parity)
@@ -42,9 +45,6 @@ double treeCall(double S, double K, double r, double sigma, double t, int N){
             //binCoef *= i / (N_double - i + 1);
             logBinCoef += std::log(i) - std::log(1.0 + N - i);
             S *= prod;
-
-            // debug
-            //std::cout << "binCoef: " << (int)binCoef << std::endl;
         }
         
     }
@@ -62,18 +62,24 @@ int main() {
      // start the clock
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     
+    double S_[SAMPLES] = {100.0, 110.0, 90.0};
+    double C_[SAMPLES] = {0.0, 0.0, 0.0};
+    int    N_[SAMPLES] = {1000, 1500, 100};
+
+
     // do work() 
-    double out1 = treeCall(100.0, 100.0, 0.03, 0.3, 1.0,  1000);
-    double out2 = treeCall(110.0, 100.0, 0.03, 0.3, 1.0,  1500);
-    double out3 = treeCall(90.0,  100.0, 0.03, 0.3, 1.0,   100);
+    #pragma omp parallel for schedule(dynamic) num_threads(SAMPLES)
+    for(unsigned int i=0; i < SAMPLES; i++){
+        C_[i] = treeCall(S_[i], 100.0, 0.03, 0.3, 1.0,  N_[i]);
+    }
     
     // stop time and show result
     // (1.) Measure time to price the following European call options
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms" << std::endl;
+    std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms\n" << std::endl;
 
     // (2.) Write the option (call) prices to console: 
-    std::cout << "\nTree price 1: " << out1 << std::endl;
-    std::cout << "Tree price 2: " << out2 << std::endl;
-    std::cout << "Tree price 3: " << out3 << std::endl;
+    for(unsigned int i=0; i < SAMPLES; i++){
+        std::cout << "Tree price " << i << " : " << C_[i] << std::endl;
+    }
 }
