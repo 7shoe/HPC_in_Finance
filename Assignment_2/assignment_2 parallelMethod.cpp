@@ -10,6 +10,8 @@
 
 /**
  * Price of a European Call option  (if the respective put price is available through the put-call parity)
+ * 
+ * STILL BUGGY
  *
  * @param S current price of the underlying stock
  * @param K strike of the option as specified in the contract 
@@ -19,7 +21,7 @@
  * @param N granularity of time-discretiziation 
  * @return CRR tree-infered price of the European Call option (as seen from long-position)
  */
-double treeCall(double S, double K, double r, double sigma, double t, int N){
+double treeCall(double S, double K, double r, double sigma, double t, int N){ 
 
     // derived model parameters
     double delta_t = t / (1.0*N);
@@ -36,25 +38,18 @@ double treeCall(double S, double K, double r, double sigma, double t, int N){
     S *= std::pow(u, N);
 
     // forward propagation: stock price dynamics simulation 
-    double C0 = 0.0;
-    double CT;
-    
-    #pragma omp
-    {
-        // #pragma omp parallel for num_threads(CORES)
-        double CT = 0.0;
-        # pragma omp for
-        for(unsigned int i=N; i >= 0; --i){
-            if(S - K < 0){
-                C0 += 0.0;
-            }else{
-                C0 += (S-K) * std::exp(logBinCoef);
-                //binCoef *= i / (N_double - i + 1);
-                logBinCoef += std::log(i) - std::log(1.0 + N - i);
-                S *= prod;
-            }
+    double CT = 0.0;
+
+    #pragma omp parallel for private(K) reduction(+:CT)
+    for(unsigned int i=N; i >= 0; --i){
+        if(S - K < 0){
+            CT += 0.0;
+        }else{
+            CT += (S-K) * std::exp(logBinCoef);
+            //binCoef *= i / (N_double - i + 1);
+            logBinCoef += std::log(i) - std::log(1.0 + N - i);
+            S *= prod;
         }
-        C0 = CT;
     }
     return CT * std::exp(-r*t); 
 }
