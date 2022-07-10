@@ -64,7 +64,7 @@ ipython
 ```
 which opens a promt in which code can be run cell by cell.
 
-## `cProfiler`
+### `cProfiler`
 cProfile provides deterministic profiling of Python programs. Each profile is a set of statistics that describes how often and for how long various parts of the program executed. The Python standard library provides two different implementations. Namely, `cProfiler` and `profile`. We care for the former. 
 
 `cProfile` is recommended for most users; it’s a C extension with reasonable overhead that makes it suitable for profiling long-running programs. Based 
@@ -81,7 +81,7 @@ cd .local/bin
 pip install line_profiles
 ```
 
-## `line_profiler`
+### `line_profiler`
 Requires annotating the function we want to profile with annotator `@profile` 
 
 ## Python: A Dynamically Typed Language
@@ -111,6 +111,13 @@ cdef double complex z, c
 cdef unsigned int d
 ```
 C functions and Python functions can call each other. *Fibbonaci* is a good example.
+In the implemented example, `TreePricer_Numpy.py` which purely runs on a vectorized NumPy array. `TreePricer_Cython.pyx`, on the other hand, runs the same code in Cython. After profiling the entire function to be in C, it is imported in the main of `TreePricer_Numpy.py`. Both can be run to price `100` options. It takes `9.06 s` for the NumPy array and `8.94 s` for Cython. In contrast, only vectorizing the forward propagation of stocks takex `17x` longer.
+
+To run the code:
+```
+ython TreePricer_Numpy.py build_ext --inplace
+```
+The `--inplace` option creates the shared object file (with .so suffix) in the current directory.
 
 ## GIL: Global Interpreter Lock
 `OpenMP` and `Cython` can be used together! However, only Cython types and no egular Python object can be run within any loop. 
