@@ -95,6 +95,12 @@ In Python, this dynamic functionality is realized with objects. These objects ca
 Allows usage of static C-type extensions for Python. The project's [website]()
 Compiler is used to generate efficient C Code from Cython code which can be used in regular Python programs.
 
+Imports
+```
+from setuptools import Extension,
+from Cython.Build import cythonize
+```
+
 Example
 ```
 cdef int a = 1
@@ -106,3 +112,24 @@ cdef double complex z, c
 cdef unsigned int d
 ```
 C functions and Python functions can call each other. *Fibbonaci* is a good example.
+
+## GIL: Global Interpreter Lock
+`OpenMP` and `Cython` can be used together! However, only Cython types and no egular Python object can be run within any loop. 
+
+```
+from cython.parallel import prange
+import numpy as np
+
+with nogil:
+    for i in prange(length_zs, schedule="static"):
+        z = zs[i]
+        ...
+
+```
+
+Then run `python setup.py`
+
+## Example: `N'-Body Problem
+The 2nd typical example for CPU-bound problems
+
+See [source](https://www.oreilly.com/library/view/cython/9781491901731/ch04.html)
