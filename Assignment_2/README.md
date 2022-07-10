@@ -73,8 +73,7 @@ cProfile provides deterministic profiling of Python programs. Each profile is a 
 Profile via 
 ```
 python -m cProfile -s cumulative sample_file.py
-`
-``
+```
 only provides `ncalls` (number of function calls), `tottime` (total time spend) but it does not provide a line-by-line profiling.
 On Midway, pip can be used to install libraries but they need to be installed into a local directory
 ```
