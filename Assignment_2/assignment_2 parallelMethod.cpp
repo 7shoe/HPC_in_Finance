@@ -9,9 +9,21 @@
 #define CORES 4
 
 /**
- * Price of a European Call option  (if the respective put price is available through the put-call parity)
+ * @brief Logarithm of the factorial
  * 
- * STILL BUGGY
+ * @param k
+ * @return double 
+ */
+double inline logFac(const int& k){
+    double out = 0.0;
+    for(int i=2; i < k+1; ++i){
+        out += std::log(i);
+    }
+    return out;
+}
+
+/**
+ * Price of a European Call option  (if the respective put price is available through the put-call parity)
  *
  * @param S current price of the underlying stock
  * @param K strike of the option as specified in the contract 
@@ -31,27 +43,26 @@ double treeCall(double S, double K, double r, double sigma, double t, int N){
     
     // vars for speed-up
     double prod = d / u;
-    double logBinCoef = std::log(0.5) * N;
     
-
-    // update 
-    S *= std::pow(u, N);
-
+    
     // forward propagation: stock price dynamics simulation 
-    double CT = 0.0;
+    double C0 = 0.0;
+    double PT = 0.0;
 
-    #pragma omp parallel for private(K) reduction(+:CT)
+    // #pragma omp parallel for num_threads(CORES)
+    S *= std::pow(u, N);                        // change --> ...(u, k)
+    double logBinCoef = -N * std::log(2.0);      // change --> ...log(N over k)
+
     for(unsigned int i=N; i >= 0; --i){
-        if(S - K < 0){
-            CT += 0.0;
+        PT = (S * std::pow(u, i) * std::pow(d, N-i) - K);
+        if(PT < 0){
+            C0 += 0.0;
+            break;
         }else{
-            CT += (S-K) * std::exp(logBinCoef);
-            //binCoef *= i / (N_double - i + 1);
-            logBinCoef += std::log(i) - std::log(1.0 + N - i);
-            S *= prod;
+            C0 += PT * std::exp(-N * std::log(2.0) + logFac(N) - logFac(N-i) - logFac(i));
         }
     }
-    return CT * std::exp(-r*t); 
+    return C0 * std::exp(-r*t); 
 }
 
 int main() {
@@ -67,7 +78,7 @@ int main() {
     
     double S_[3] = {100.0, 110.0, 90.0};
     double C_[3] = {0.0, 0.0, 0.0};
-    int    N_[3] = {1000, 1500, 100};
+    int    N_[3] = {10, 15, 10};
 
 
     // do work() 

@@ -32,7 +32,6 @@ double treeCall(double S, double K, double r, double sigma, double t, int N){
     double prod = d / u;
     double logBinCoef = std::log(0.5) * N;
     
-
     // update 
     S *= std::pow(u, N);
 

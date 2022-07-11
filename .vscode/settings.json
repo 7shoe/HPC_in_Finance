@@ -83,6 +83,7 @@
         "map": "cpp",
         "set": "cpp",
         "typeindex": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "future": "cpp"
     }
 }
