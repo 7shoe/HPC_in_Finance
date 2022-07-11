@@ -59,13 +59,18 @@ int main() {
     S = 90;   K = 100;  r = 0j.03;  v = 0.3;   T = 1;    N = 100
     */
 
+    double C[3] = {0.0, 0.0, 0.0};
+    double S[3] = {100.0, 110.0, 90.0};
+    double N[3] = {1000, 1500, 100};
+
      // start the clock
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     
     // do work() 
-    double out1 = treeCall(100.0, 100.0, 0.03, 0.3, 1.0,  1000);
-    double out2 = treeCall(110.0, 100.0, 0.03, 0.3, 1.0,  1500);
-    double out3 = treeCall(90.0,  100.0, 0.03, 0.3, 1.0,   100);
+    #pragma omp parallel for
+    for (unsigned int i=0; i < 3; ++i){
+        C[i] = treeCall(S[i], 100.0, 0.03, 0.3, 1.0,  N[i]);
+    }
     
     // stop time and show result
     // (1.) Measure time to price the following European call options
@@ -73,7 +78,7 @@ int main() {
     std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms" << std::endl;
 
     // (2.) Write the option (call) prices to console: 
-    std::cout << "\nTree price 1: " << out1 << std::endl;
-    std::cout << "Tree price 2: " << out2 << std::endl;
-    std::cout << "Tree price 3: " << out3 << std::endl;
+    for (unsigned int i=0; i < 3; ++i){
+        std::cout << "\nTree price " << i << " : " <<  C[i] << std::endl;
+    }
 }

@@ -53,7 +53,7 @@ vslDeleteStream(&stream1);
 
 ## Login
 On Midway, login and request a compute node (e.g. for 1 hour) going forward
-`sinteractive --time=1:0:0`
+`sinteractive --account=finm32950 --time=1:0:0`
 will forward us to `siebenschuh@midway3-0007 {Dictionary}` or something
 Then run
 ```
