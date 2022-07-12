@@ -12,9 +12,17 @@ module avail cuda
 > cuda/10.2  cuda
 module load cuda/11.5
 
-sinteractive --partition=gpu --gres=gpu:1 
+sinteractive --partition=gpu --gres=gpu:1 --time=0:30:00 --account=finm32950
 
 nvcc hello.cu -o hello
+```
+
+Switch back to C++ compiler if you have to
+```
+module avail
+module list
+module load intel/2022.0
+module unload intel/2022.0
 ```
 
 # 1. CUDA Essentials
