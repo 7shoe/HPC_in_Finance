@@ -49,6 +49,8 @@ CUDA is a formidable technology for data parallelism
 - data parallelism: execute the **same operation** on **different data**
 - [SIMT](https://en.wikipedia.org/wiki/Single_instruction,_multiple_threads) (single instruction, multiple threads): Noticably, all "threads" are executed in lock-step. Popular on general-purpose computing on graphics processing units (GPGPU). 
 
+The major drawback is the transfer of data in between memories of host and device. This tens to be expensive. 
+
 ### Interlude: `malloc` 
 A construct of c++ that allocates size bytes of uninitialized storage. If allocation succeeds, it returns a pointer that is suitably aligned for any object type.
 
@@ -93,3 +95,36 @@ __global__ void add(float* a, floiat* b, float* c, int N){
     c[idx] = a[idx] + b[idx];
 }
 ```
+Keyword `cudaMemcpyDeviceToHost`. 
+
+## Grid-Stride Range_based for Loop
+If `N` is bigger than the number of available threads, block several operations into one via *grid-stride loop*. In our example: 
+```
+for(int idx=threadId; i<N; idx+=strid){
+    c[idx] = a[idx] + b[idx];
+}
+```
+It handles `N>T`, scales well for different sizes of `N`, and increases efficiency as each thread is computed.
+
+
+## Naming Convention
+`d_a` for variables referring ot objects run on the device while `h_a` will be run on the host.
+
+```
+cudaMalloc((float**)&d_a, N*sizeof(float)); 
+cudaMalloc((float**)&d_b, N*sizeof(float)); 
+cudaMalloc((float**)&d_c, N*sizeof(float)); 
+
+cudaMemcpy(d_a, h_a, N*sizeof(float), cudaMemcpyHostToDevice)  // copy data from host -> device
+cudaMemcpy(d_b, h_b, N*sizeof(float), cudaMemcpyHostToDevice)  // copy data from host -> device
+
+...
+
+cudaMemcpy(h_a, d_a, N*sizeof(float), cudaMemcpyDeviceToHost)  // copy back from device ->host
+```
+
+
+## Further Reading on CUDA
+The official [CUDA Toolkit documentation](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html). The documentation is available as a 454-page strong [PDF](https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf).
+
+An interesting [blog article](https://developer.nvidia.com/blog/power-cpp11-cuda-7/) by Mark Harris on CUDA's capability in  light of C++ 11 features.
