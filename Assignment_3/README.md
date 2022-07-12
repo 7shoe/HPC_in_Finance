@@ -9,7 +9,8 @@ Copy and unzip `.tar` file. Activate CUDA module.
 cp /project/finm32950/chanaka/L5Demo.tar L5Demo.tar
 
 module avail cuda
-> cuda/10.2  cuda
+> cuda/10.2  cuda/11.2  cuda/11.3  cuda/11.5
+
 module load cuda/11.5
 
 sinteractive --partition=gpu --gres=gpu:1 --time=0:30:00 --account=finm32950
