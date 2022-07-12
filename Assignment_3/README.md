@@ -1,4 +1,4 @@
-## CUDA on Midway
+# 0. CUDA on Midway
 
 ```
 sinteractive --account=finm32950 --time=hh:mm:ss  
@@ -12,13 +12,12 @@ module avail cuda
 > cuda/10.2  cuda
 module load cuda/11.5
 
-
 sinteractive --partition=gpu --gres=gpu:1 
 
 nvcc hello.cu -o hello
 ```
 
-## CUDA Essentials
+# 1. CUDA Essentials
 
 ### MVP
 A function annotated with `__global__` can be devised from the host (i.e. CPU) to be run on the device (i.e. GPU).
@@ -108,7 +107,7 @@ It handles `N>T`, scales well for different sizes of `N`, and increases efficien
 
 
 ## Naming Convention
-`d_a` for variables referring ot objects run on the device while `h_a` will be run on the host.
+`d_a` for variables referring ot objects run on the device while `h_a` will be run on the host. In addition, CUDA provides the C++-alike `cudaMalloc` to store data. The data can be transferred from the host to the device and vice versa, e.g. through the `cudaMemcpy()` function.
 
 ```
 cudaMalloc((float**)&d_a, N*sizeof(float)); 
@@ -124,7 +123,47 @@ cudaMemcpy(h_a, d_a, N*sizeof(float), cudaMemcpyDeviceToHost)  // copy back from
 ```
 
 
-## Further Reading on CUDA
+## Further Reading on CUDA Fundamentals
 The official [CUDA Toolkit documentation](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html). The documentation is available as a 454-page strong [PDF](https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf).
 
 An interesting [blog article](https://developer.nvidia.com/blog/power-cpp11-cuda-7/) by Mark Harris on CUDA's capability in  light of C++ 11 features.
+
+
+# 2. Examples in Finance
+A throwback to the first problem in this class. Pricing many options.
+Now, define a kernel that is the Black Scholes pricer.
+
+## 2.1 Black Scholes Pricing
+```
+__global__ void BlackScholesKernel(
+    float *S, float *K, float *T, 
+    float *r, float* v, 
+    float* C, Float *P)
+```
+For each option, the quantile of the normal distribution is required. This can be done with a device-function. 
+```
+__device__ float cdf_normal(const float x){
+    ...
+}
+```
+Then, run 
+```
+BlackScholesKernel<<<500,1000>>>
+```
+## 2.2 Monte Carlo on the GPU
+The `cuRAND` library generates random numbers for CUDA applications. Its documentation is visible [here](https://docs.nvidia.com/cuda/curand/index.html).
+Example:  
+
+```
+curandSetPseudpRandomGenerator(seed, ...)
+...
+curandGenerateUniform(gen, devData, N);
+...
+cudaMemcpy(hostData, devData, numBytes, cudaMem)
+```
+Whenever the cuda program is using `cuRand`, it must be linked via `-l`, i.e.
+```
+nvcc -lcurand curand_test.cu -o curand_test
+```
+
+Look into reduction on the GPU on [here](https://www.youtube.com/watch?v=bpbit8SPMxU).
