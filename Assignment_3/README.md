@@ -136,7 +136,7 @@ cudaMemcpy(h_a, d_a, N*sizeof(float), cudaMemcpyDeviceToHost)  // copy back from
 The official [CUDA Toolkit documentation](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html). The documentation is available as a 454-page strong [PDF](https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf).
 
 An interesting [blog article](https://developer.nvidia.com/blog/power-cpp11-cuda-7/) by Mark Harris on CUDA's capability in  light of C++ 11 features.
-
+In addition, another [article](https://developer.nvidia.com/blog/how-optimize-data-transfers-cuda-cc/) of the same author on how to reduce data transfer.
 
 # 2. Examples in Finance
 A throwback to the first problem in this class. Pricing many options.
