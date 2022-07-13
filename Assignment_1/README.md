@@ -25,6 +25,16 @@ Use Use Intel complier (icc) to build the program
 Then run the file 
 - `./assignment1`
 
+### Run the Assignment
+Go to 
+```
+cd /home/siebenschuh
+tar -xvf assignment1_siebenschuh_compr
+ls Assignment1_siebenschuh
+
+./assignment1
+```
+
 ### Exact steps for Assignment 1
 1. Generate random input values
 2. Measure current time, <font color='red'>t1</font>
