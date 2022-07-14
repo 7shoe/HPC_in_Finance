@@ -1,12 +1,13 @@
 # 0. CUDA on Midway
 
-In a nutshell. To run code on any device, run:
+In a nutshell. To run code on any GPU-device, run:
 ```
 module load cuda/11.5
 
-sinteractive --partition=gpu --gres=gpu:1 --time=0:30:00 --account=finm32950 
+sinteractive --partition=gpu --gres=gpu:1 --time=3:00:00 --account=finm32950 
 ```
 
+Otherwise, no computatation/data will be pushed to the GPU returning results as `0`. 
 More details:
 Copy and unzip `.tar` file. Activate CUDA module.
 ```
