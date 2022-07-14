@@ -30,7 +30,7 @@ Go to
 ```
 cd /home/siebenschuh
 tar -xvf assignment1_siebenschuh_compr
-ls Assignment1_siebenschuh
+cd Assignment1_siebenschuh
 
 ./assignment1
 ```

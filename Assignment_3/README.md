@@ -1,9 +1,13 @@
 # 0. CUDA on Midway
 
+In a nutshell. To run code on any device, run:
 ```
-sinteractive --account=finm32950 --time=hh:mm:ss  
+module load cuda/11.5
+
+sinteractive --partition=gpu --gres=gpu:1 --time=0:30:00 --account=finm32950 
 ```
 
+More details:
 Copy and unzip `.tar` file. Activate CUDA module.
 ```
 cp /project/finm32950/chanaka/L5Demo.tar L5Demo.tar
