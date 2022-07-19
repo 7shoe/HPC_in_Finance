@@ -181,3 +181,35 @@ nvcc -lcurand curand_test.cu -o curand_test
 ```
 
 Look into reduction on the GPU on [here](https://www.youtube.com/watch?v=bpbit8SPMxU).
+
+
+# Notes on the Final Assignment `final.cu`
+@Author Carlo Siebenschuh
+        University of Chicago
+        siebenschuh@uchicago.edu
+        July 18th, 2022
+
+
+Log into Midway server and request (at least) 1 GPU via an `interactive` session. Then, activate the GPU-support module via `module load cuda/11.5`. Check for available modules if not available via `module avail cuda`. Run the code via
+
+  module load cuda/11.5
+  ./final
+
+## Runtime
+The code runs in (on average, n=20) 106ms. Regardless, the first execution can take ~300ms (likely to spin up the GPU in the interactive session). Run code at least twice!
+
+## Why the Code is as fast as it is:
+Data transfer in between device and host is minimal as (a) the data is generated on the device itself and (b) reduced to the mean. Hyperparameters where chosen to accelerate the code given Midway's GPU of choice. Finally, the random number generation was fine-tuned for speed (and uncorrelated pseuo-random numbers). For reference: the fastest Python implementation (purely C-based NumPy) takes ~150ms. It is provided, too.
+
+### 1. Hyperparameter Choice tailored to Midway Hardware
+The final assignment is written in CUDA and optimized for Midway's GPU. Namely, the NVIDIA Quadro RT 6000. This impacted the choice of hyperparameters, e.g. the `WARP_SIZE` (through which practically all NVIDIA GPUs enable Single Instruction Multiple Thread (SIMT) work by executing threads in groups of 32 warps). Additionally, the data sheet of the Quadro RTX 600 [Link](www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-6000-us-nvidia-704093-r4-web.pdf) was taken into account for the block size and threads per block.
+
+### 2. Memory Management and GPU-specific Datatypes
+By far the most expensive driver for runtime was allocating memory on the GPU. In turn, great effort was put into efficient data representation. For example, the `float3` datatype (which is used to represent 3D datapoints for graphics rendering) was leveraged to store/process the 3 call prices more efficiently. In addition, the `cudaMallocManaged` was used for scalar values to eschew costly (manual) transfer of data in between host and device.
+
+### 3. Random Number Generation
+The terminal stock prices where drawn directly from a log-normal random number generator (instead of drawing the return from a Normal distribution and transforming it to a stock price). For speed/vectorization advantages, the output was chosen as float (rather than double) since accuracy is negligible for the Monte Carlo application, as minor errors should cancel out for `N=1e6` samples. *cuRand* provides a wide array of pseuo- and qausi-random number generators: Experimentation with the random state showed that `CURAND_RNG_PHILOX4_32_10` was the fastest. Moreover, the lognormlal numbers where drawn from the modified Box-Mueller implementation and offered as `float2`. This expedited the random number generation further allowing lower thread counts to run.
+Unfortunately, the task demanded 3x 1mio random numbers. A waste, since 1mio random numbers shared among the 3 simulated call options would have sped up the code even further and still refelected the economic reality (as the stock price dynamics are identical except for the 3 different inital values). However, the task was followed closely and 3mio random (terminal) stock prices were drawn.
+
+### 4. Reduction
+Rather than averaging the payouts on the host, it is done on the device itself. This saces lengthy datatransfer (of 3mio random payout values) and enables exploitation of the parallelism when the values are added pairwise. Since the sum is commutative, a simple dyadic scheme was chosen.
