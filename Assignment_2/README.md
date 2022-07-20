@@ -139,3 +139,32 @@ Then run `python setup.py`
 The 2nd typical example for CPU-bound problems
 
 See [source](https://www.oreilly.com/library/view/cython/9781491901731/ch04.html)
+
+
+## Assignment 2 - README
+@Author Carlo Siebenschuh
+        University of Chicago
+        siebenschuh@uchicago.edu
+        July 11th, 2022
+
+## RUN CODE
+First, activate the correct module. Subsequently, compile (note that there are no dependencies, e.g. header files).
+Moreover, no arguments are required as the program runs as specified.
+
+```
+  module load intel/2022.0
+  icc -qopenmp assignment2.cpp -o assignment2.out
+  ./assignment2.out
+```
+
+## IMPLEMENTATIONS   [Avg. Runtime +- stdev]
+`assignment2_taskParallel.cpp`   [7.4ms  +- 1.9ms] --> parallelization (reduction) within method
+`assignment2.cpp`                [5.6ms  +- 3.2ms] --> parallelization on task-level (each of the examples on on thread) (Submission)
+`noParaAssignment2.cpp`          [0.0 ms +- 1.0ms] --> no parallelization
+
+## CODE EXPLANATION
+TL;DR: Leverage analytic representation of state-specific terminal stock price, unroll the backward propagation of the state-specific call price, exploit recombining property of stock price tree and the monotonocity of $(S * u^{k} * d^{N-k}-K)$ in the number of u to break loop-update of call price C0.
+
+Details:
+The program implements a tree-based pricing scheme for a European call option. The forward propagation (of the stock price dynamics) was replaced by the analytical form of the terminal stock price in the k-th state for N steps; namely, `S*std::pow(u, k)*(d, N-k)`. Furthermore, the backwad propagation is replaced since with $p_u = p_d = 0.5$ equal probability is assigned to each of the possible 2^N tracteories. This enables to update the call price C0 by adding each state-dependent option payout $(S - K)$ and updating `S *= d/u` when starting in state `k=N` (all up-movements) to (one down, N-1 up)- movement etc. Rather than summing over all 2^N possible trajectories (exponential in N),
+the recombining property of the tree with its (N+1) terminal states is leverage and the number of combinations are counted for each terminal state via binomial coefficient (n over k). For numerical stability, in light of very large N, the logarithm of the binCoeff is updated additively (rather than the binomial coefficient itself multiplicatively). This, in turn, is faster than any numerical implementation of the binomial coefficient. Finally, since the states are looped from all-up towards all-down, the loop breaks as soon as `S<K`, as the remaining payouts will be `0.0`.
